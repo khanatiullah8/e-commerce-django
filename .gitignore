@@ -1,7 +1,32 @@
-.idea/
-.vscode/
-.env*/
-env*/
+# Django-specific
+*.pyc
 __pycache__/
-instance/
-.venv
+db.sqlite3
+.env
+
+# Logs
+*.log
+
+# Media and static files
+media/
+static/
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Migrations (optional, since they can be regenerated)
+**/migrations/**
+
+# IDE/editor files
+.vscode/
+.idea/
+*.swp
+
+# Cache files
+*.cache
+
+# Coverage reports
+.coverage
+htmlcov/
