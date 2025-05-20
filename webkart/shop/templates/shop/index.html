@@ -34,7 +34,6 @@
 
 {% block body %}
 <div class="container my-2">
-  <!-- <h1>All Products</h1> -->
   {% for products in products_all %}
     <!-- Slider main container -->
     <h2>{{products.0.category|title}}</h2>
@@ -49,8 +48,8 @@
             <div class="card-body">
               <h5 class="card-title text-truncate">{{ product.title }}</h5>
               <p class="card-text truncate-2">{{ product.desc }}</p>
-              <button id="pr{{product.id}}" class="btn btn-primary add-to-cart">Add To Cart</button>
-              <a href="#" class="btn btn-primary">View More</a>
+              <button id="pr{{product.id}}" data-image="{{product.image.url}}" data-title="{{product.title}}" data-price="{{product.price}}" class="btn btn-primary add-to-cart">Add To Cart</button>
+              <!-- <a href="#" class="btn btn-primary">View More</a> -->
             </div>
           </div>
         {% endfor %}
@@ -90,15 +89,27 @@
   // add to cart
   $('.add-to-cart').click(function() {
     let id = this.id
-    if (!cart[id]) {
-      cart[id] = 1
+    let title = this.dataset.title
+    let image = this.dataset.image
+    let price = this.dataset.price
+    
+    let item = cart.find((item) => item.id == id)
+
+    if (!item) {
+      cart.push({id, title, price, image, quantity: 1})
     } else {
-      cart[id] += 1
+      cart.forEach(function(i,idx) {
+        if (i.id == item.id) {
+          cart[idx]['quantity'] += 1
+        }
+      })
     }
+
     let count = 0
-    for(i in cart) {
-      count += cart[i] 
+    for(let i in cart) {
+      count += cart[i]['quantity']
     }
+
     $("#cartCount").html(count < 100 ? count : "99<sup>+</sup>")
     localStorage.setItem('cart', JSON.stringify(cart))
   })

@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %} View Cart {% endblock %}
+
+{% block body %}
+<div class="container my-2">
+    <div id="cartItemContainer" class="my-3"></div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    if (cart.length) {
+        elem = `
+            <div class='mb-4 d-flex align-items-center justify-content-between'>
+                <h3 class='m-0'>Cart Items</h3>
+                <button class='btn btn-danger clear-cart-btn'>Clear Cart</button>
+            </div>
+            `
+        $("#cartItemContainer").append(elem)
+        cart.forEach(item => {
+            let elem = `
+                <div class="card mb-3">
+                    <div class="row g-0">
+                        <div class="p-2" style="width: 100px;">
+                            <img src="${item.image}" class="img-fluid rounded-start" alt="${item.title}">
+                        </div>
+                        <div class="col-10">
+                            <div class="card-body p-2">
+                                <h6 class="card-title text-truncate">${item.title}</h6>
+                                <p class="card-text text-muted mb-1">₹${item.price}</p>
+                                <p class="card-text text-muted mb-1">Qty: ${item.quantity}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `
+            $("#cartItemContainer").append(elem)
+        });
+    } else {
+        let elem = `
+                <p class='card-text text-muted fs-2 text-center'>Your Cart is Empty</p>
+                <div class="text-center">
+                    <a class="btn btn-primary" href="{% url 'shop:home' %}">Shop Now</a>
+                </div>
+                `
+        $("#cartItemContainer").append(elem)
+    }
+
+    $(".clear-cart-btn").click(function() {
+        localStorage.removeItem('cart')
+        document.location = "/shop/viewcart"
+    })
+</script>
+{% endblock %}

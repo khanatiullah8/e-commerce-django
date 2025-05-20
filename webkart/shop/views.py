@@ -30,5 +30,8 @@ def search(request):
 def product_view(request):
     return HttpResponse("Product View Page")
 
+def view_cart(request):
+    return render(request, 'shop/view-cart.html')
+
 def checkout(request):
     return HttpResponse("Checkout Page")
