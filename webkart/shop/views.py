@@ -4,13 +4,13 @@ from .models import Product
 
 def home(request):
     products_all = []
-    categories_obj = Product.objects.values('category').distinct()
-    categories = [c['category'] for c in categories_obj]
+    category_types = Product.objects.values('category').distinct()
+    categories = [c['category'] for c in category_types]
 
     for category in categories:
         product = Product.objects.filter(category=category)
         products_all.append(product)
-        
+
     params = {'products_all':products_all}
 
     return render(request, 'shop/index.html', params)

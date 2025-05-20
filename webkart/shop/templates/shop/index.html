@@ -49,7 +49,7 @@
             <div class="card-body">
               <h5 class="card-title text-truncate">{{ product.title }}</h5>
               <p class="card-text truncate-2">{{ product.desc }}</p>
-              <a href="#" class="btn btn-primary">Add To Cart</a>
+              <button id="pr{{product.id}}" class="btn btn-primary add-to-cart">Add To Cart</button>
               <a href="#" class="btn btn-primary">View More</a>
             </div>
           </div>
@@ -67,6 +67,7 @@
 
 {% block script %}
 <script>
+  // swiper
   const swiper = new Swiper('.swiper.product-swiper', {
     loop: true,
     // autoplay: {
@@ -85,5 +86,21 @@
       prevEl: '.swiper-button-prev',
     },
   });
+
+  // add to cart
+  $('.add-to-cart').click(function() {
+    let id = this.id
+    if (!cart[id]) {
+      cart[id] = 1
+    } else {
+      cart[id] += 1
+    }
+    let count = 0
+    for(i in cart) {
+      count += cart[i] 
+    }
+    $("#cartCount").html(count < 100 ? count : "99<sup>+</sup>")
+    localStorage.setItem('cart', JSON.stringify(cart))
+  })
 </script>
 {% endblock %}
