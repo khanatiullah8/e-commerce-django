@@ -2,8 +2,88 @@
 
 {% block title %} shop home page {% endblock %}
 
+{% block style %}
+<style>
+  .product-swiper {
+    padding-bottom: 30px;
+  }
+
+  .product-swiper :is(.swiper-button-prev, .swiper-button-next) {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 25px;
+    border-radius: 50%;
+  }
+
+  .product-swiper :is(.swiper-button-prev, .swiper-button-next)::after {
+    font-size: 30px;
+    font-weight: 600;
+    color: #fff !important;
+  }
+
+  .product-swiper .swiper-pagination {
+    bottom: 0;
+  }
+
+  .product-swiper .swiper-pagination .swiper-pagination-bullet {
+    width: 30px;
+    height: 4px;
+    border-radius: 3px;
+  }
+</style>  
+{% endblock %}
+
 {% block body %}
 <div class="container my-2">
-  <h1>shop home page</h1>
+  <!-- <h1>All Products</h1> -->
+  {% for products in products_all %}
+    <!-- Slider main container -->
+    <h2>{{products.0.category|title}}</h2>
+    <div class="swiper product-swiper my-4">
+      <!-- Additional required wrapper -->
+      <div class="swiper-wrapper">
+        {% for product in products %}
+          <div class="swiper-slide card">
+            <div class="overflow-hidden">
+              <img src="{{product.image.url}}" class="card-img-top" alt="{{product.brand}}">
+            </div>
+            <div class="card-body">
+              <h5 class="card-title text-truncate">{{ product.title }}</h5>
+              <p class="card-text truncate-2">{{ product.desc }}</p>
+              <a href="#" class="btn btn-primary">Add To Cart</a>
+              <a href="#" class="btn btn-primary">View More</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+      <!-- pagination -->
+      <div class="swiper-pagination"></div>
+      <!-- navigation buttons -->
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+    </div>
+  {% endfor %}
 </div>
+{% endblock %}
+
+{% block script %}
+<script>
+  const swiper = new Swiper('.swiper.product-swiper', {
+    loop: true,
+    // autoplay: {
+    //   delay: 2500,
+    //   disableOnInteraction: false,
+    // },
+    slidesPerView: 4,
+    slidesPerGroup: 4,
+    spaceBetween: 20,
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true
+    },
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+  });
+</script>
 {% endblock %}
