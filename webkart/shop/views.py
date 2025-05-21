@@ -1,6 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Product
+from .models import Product, Contact
 
 # home
 def home(request):
@@ -20,8 +20,22 @@ def home(request):
 def about(request):
     return render(request, 'shop/about.html')
 
+# contact us
 def contact(request):
-    return HttpResponse("Contact Page")
+    is_form_submitted = "no"
+    if request.method == "POST":
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        phone = request.POST.get("phone")
+        desc = request.POST.get("desc")
+
+        contact = Contact(name=name,email=email,phone=phone,desc=desc)
+        contact.save()
+        is_form_submitted = "yes"
+    else:
+        is_form_submitted = "no"
+
+    return render(request, 'shop/contact.html', {'is_form_submitted':is_form_submitted})
 
 def tracker(request):
     return HttpResponse("Tracker Page")
