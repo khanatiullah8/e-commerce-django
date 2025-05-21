@@ -51,8 +51,10 @@
               <h5 class="card-title text-truncate mb-1">{{ product.title }}</h5>
               <p class="card-text mb-1 text-muted">₹<span class="product-price">{{ product.price }}</span></p>
               <p class="card-text truncate-2">{{ product.desc }}</p>
-              <button id="pr{{product.id}}" data-image="{{product.image.url}}" data-title="{{product.title}}" data-price="{{product.price}}" class="btn btn-primary add-to-cart me-1">Add To Cart</button>
-              <a href="{% url 'shop:viewproduct' product.id %}" class="btn btn-primary">View More</a>
+              <span id="divpr{{product.id}}" class="divpr">
+                <button id="pr{{product.id}}" data-image="{{product.image.url}}" data-title="{{product.title}}" data-price="{{product.price}}" class="btn btn-primary add-to-cart">Add To Cart</button>
+              </span>
+              <a href="{% url 'shop:viewproduct' product.id %}" class="btn btn-secondary ms-1">View More</a>
             </div>
           </div>
         {% endfor %}
@@ -92,9 +94,9 @@
   });
 
   // format product price
-    document.querySelectorAll(".product-price").forEach(function(item) {
-      let inr_format = convertToIndianRupees(+item.innerHTML)
-      item.innerHTML = inr_format
-    })
+  document.querySelectorAll(".product-price").forEach(function(item) {
+    let inr_format = convertToIndianRupees(+item.innerHTML)
+    item.innerHTML = inr_format
+  })
 </script>
 {% endblock %}

@@ -88,26 +88,82 @@
                 count += cart[i]['quantity']
             }
             $("#cartCount").html(count < 100 ? count : "99<sup>+</sup>")
+            updateCartButton(cart)
+        }
+
+        // show increment/decrement button
+        function updateCartButton(cart) {
+            for(let item in cart) {
+                if (cart[item]['quantity'] > 0) {
+                    $(`#div${cart[item]['id']}`).html(`
+                        <button id='minus${cart[item]['id']}' data-id='${cart[item]['id']}' class='btn btn-primary minus'><i class="bi bi-dash pe-none"></i></button>
+                        <span class='mx-1'>${cart[item]['quantity']}</span>
+                        <button id='plus${cart[item]['id']}' data-id='${cart[item]['id']}' class='btn btn-primary plus'><i class="bi bi-plus pe-none"></i></button>
+                    `)
+                } else {
+                    $(`#div${cart[item]['id']}`).html(`
+                        <button id="${cart[item]['id']}" data-image="${cart[item]['image']}" data-title="${cart[item]['title']}" data-price="${cart[item]['price']}" class="btn btn-primary add-to-cart">Add To Cart</button>
+                    `)
+                    
+                    cart.splice(item, 1)
+                    addToCart(cart)
+                }
+            }
+            
         }
 
         // add to cart
-        $('.add-to-cart').click(function() {
-            let id = this.id
-            let title = this.dataset.title
-            let image = this.dataset.image
-            let price = this.dataset.price
-            
+        function addToCart(cart) {
+            $('.add-to-cart').click(function() {
+                let id = this.id
+                let title = this.dataset.title
+                let image = this.dataset.image
+                let price = this.dataset.price
+                
+                let item = cart.find((item) => item.id == id)
+    
+                if (!item) {
+                cart.push({id, title, price, image, quantity: 1})
+                } else {
+                cart.forEach(function(i,idx) {
+                    if (i.id == item.id) {
+                    cart[idx]['quantity'] += 1
+                    }
+                })
+                }
+                updateCartData(cart)
+            })
+        }
+
+        addToCart(cart)
+
+        // update cart
+        $(".divpr").on('click', 'button.minus', function() {
+            let id = this.dataset.id
             let item = cart.find((item) => item.id == id)
 
-            if (!item) {
-            cart.push({id, title, price, image, quantity: 1})
-            } else {
             cart.forEach(function(i,idx) {
                 if (i.id == item.id) {
-                cart[idx]['quantity'] += 1
+                    cart[idx]['quantity'] -= 1
                 }
             })
-            }
+            updateCartData(cart)
+        })
+
+        $(".divpr").on('click', 'button.plus', function() {
+            let id = this.dataset.id
+            let item = cart.find((item) => item.id == id)
+
+            cart.forEach(function(i,idx) {
+                if (i.id == item.id) {
+                    cart[idx]['quantity'] += 1
+                }
+            })
+            updateCartData(cart)
+        })
+
+        function updateCartData(cart) {
+            updateCartButton(cart)
 
             let count = 0
             for(let i in cart) {
@@ -116,7 +172,7 @@
 
             $("#cartCount").html(count < 100 ? count : "99<sup>+</sup>")
             localStorage.setItem('cart', JSON.stringify(cart))
-        })
+        }
     </script> 
     {% block script %}{% endblock %}
   </body>
