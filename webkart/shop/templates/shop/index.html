@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block title %} shop home page {% endblock %}
 
 {% block style %}
@@ -46,10 +48,11 @@
               <img src="{{product.image.url}}" class="card-img-top" alt="{{product.brand}}">
             </div>
             <div class="card-body">
-              <h5 class="card-title text-truncate">{{ product.title }}</h5>
+              <h5 class="card-title text-truncate mb-1">{{ product.title }}</h5>
+              <p class="card-text mb-1 text-muted">₹<span class="product-price">{{ product.price }}</span></p>
               <p class="card-text truncate-2">{{ product.desc }}</p>
-              <button id="pr{{product.id}}" data-image="{{product.image.url}}" data-title="{{product.title}}" data-price="{{product.price}}" class="btn btn-primary add-to-cart">Add To Cart</button>
-              <!-- <a href="#" class="btn btn-primary">View More</a> -->
+              <button id="pr{{product.id}}" data-image="{{product.image.url}}" data-title="{{product.title}}" data-price="{{product.price}}" class="btn btn-primary add-to-cart me-1">Add To Cart</button>
+              <a href="{% url 'shop:viewproduct' product.id %}" class="btn btn-primary">View More</a>
             </div>
           </div>
         {% endfor %}
@@ -65,8 +68,10 @@
 {% endblock %}
 
 {% block script %}
-<script>
-  // swiper
+<script type="module">
+  import {convertToIndianRupees} from "{% static 'js/utils_functions.js' %}"
+
+  // swiper configuration
   const swiper = new Swiper('.swiper.product-swiper', {
     loop: true,
     // autoplay: {
@@ -86,32 +91,10 @@
     },
   });
 
-  // add to cart
-  $('.add-to-cart').click(function() {
-    let id = this.id
-    let title = this.dataset.title
-    let image = this.dataset.image
-    let price = this.dataset.price
-    
-    let item = cart.find((item) => item.id == id)
-
-    if (!item) {
-      cart.push({id, title, price, image, quantity: 1})
-    } else {
-      cart.forEach(function(i,idx) {
-        if (i.id == item.id) {
-          cart[idx]['quantity'] += 1
-        }
-      })
-    }
-
-    let count = 0
-    for(let i in cart) {
-      count += cart[i]['quantity']
-    }
-
-    $("#cartCount").html(count < 100 ? count : "99<sup>+</sup>")
-    localStorage.setItem('cart', JSON.stringify(cart))
-  })
+  // format product price
+    document.querySelectorAll(".product-price").forEach(function(item) {
+      let inr_format = convertToIndianRupees(+item.innerHTML)
+      item.innerHTML = inr_format
+    })
 </script>
 {% endblock %}

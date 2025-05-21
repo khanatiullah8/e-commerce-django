@@ -27,8 +27,12 @@ def tracker(request):
 def search(request):
     return HttpResponse("Search Page")
 
-def product_view(request):
-    return HttpResponse("Product View Page")
+def view_product(request, product_id):
+    product = Product.objects.filter(id=product_id).first()
+
+    params = {'product':product}
+
+    return render(request, 'shop/view-product.html', params)
 
 def view_cart(request):
     return render(request, 'shop/view-cart.html')
