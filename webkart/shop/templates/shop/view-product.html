@@ -14,7 +14,7 @@
                 <span id="divpr{{product.id}}" class="divpr">
                     <button id="pr{{product.id}}" data-image="{{product.image.url}}" data-title="{{product.title}}" data-price="{{product.price}}" class="btn btn-primary add-to-cart me-2">Add To Cart</button>
                 </span>
-                    <button class="btn btn-secondary">Buy Now</button>
+                    <a class="btn btn-secondary" href="{% url 'shop:viewcheckout' %}">Buy Now</a>
                 </div>
             </div>
             <div class="col-md-8">

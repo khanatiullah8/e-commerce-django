@@ -27,7 +27,7 @@
                 </div>
                 `
             cart.forEach(item => {
-                totalPrice += Number(item.price)
+                totalPrice += (Number(item.price) * Number(item.quantity))
                 elem += `
                     <div class="col-md-6 px-2">
                         <div class="row g-0 border rounded">
@@ -38,14 +38,19 @@
                                 <h6 class="text-truncate">${item.title}</h6>
                                 <p class="text-muted mb-1">₹${convertToIndianRupees(item.price)}</p>
                                 <p class="text-muted mb-1">Qty: ${item.quantity}</p>
-                                <button data-id='${item.id}' class='btn btn-sm btn-secondary remove-from-cart'>Remove</button>
+                                <span id="div${item.id}" class="divpr">
+                                    <button id='minus${item.id}' data-id='${item.id}' class='btn btn-primary minus'><i class="bi bi-dash pe-none"></i></button>
+                                    <span class='mx-1'>${item.quantity}</span>
+                                    <button id='plus${item.id}' data-id='${item.id}' class='btn btn-primary plus'><i class="bi bi-plus pe-none"></i></button>
+                                </span>
+                                <button data-id='${item.id}' class='btn btn-secondary remove-from-cart'>Remove</button>
                             </div>
                         </div>
                     </div>
                     `
             });
             elem += `<div>
-                        <p class='mt-2'><span class='bg-light px-2 py-1'>Your Cart Total is <strong>₹${convertToIndianRupees(totalPrice)}</strong></span></p>
+                        <p class='mt-2'><span class='bg-light px-2 py-1 total-price'>Your Cart Total is <strong>₹${convertToIndianRupees(totalPrice)}</strong></span></p>
                         <a class="btn btn-primary" href="{% url 'shop:viewcheckout' %}">Checkout</a>
                     </div>`
         } else {

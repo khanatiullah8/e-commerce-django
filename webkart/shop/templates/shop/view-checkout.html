@@ -66,7 +66,7 @@
         if (cart?.length) {
             elem += `<h3 class='mb-3 text-capitalize'>step 1 - checkout - review your cart items</h3>`
             cart.forEach(item => {
-                totalPrice += Number(item.price)
+                totalPrice += (Number(item.price) * Number(item.quantity))
                 elem += `
                     <div class="col-md-6 px-2">
                         <div class="row g-0 border rounded">
