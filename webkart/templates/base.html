@@ -83,12 +83,7 @@
             $("#cartCount").html(0)
         } else {
             cart = JSON.parse(localStorage.getItem('cart'))
-            let count = 0
-            for(let i in cart) {
-                count += cart[i]['quantity']
-            }
-            $("#cartCount").html(count < 100 ? count : "99<sup>+</sup>")
-            updateCartButton(cart)
+            updateCartData(cart)
         }
 
         // show increment/decrement button
