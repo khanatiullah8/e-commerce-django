@@ -76,7 +76,6 @@
                     </div>
                     `
             });
-            $("#checkoutItemsContainer").html(elem)
             $(".place-order-form-container").removeClass("d-none")
         } else {
             elem = `
@@ -85,9 +84,9 @@
                         <a class="btn btn-primary" href="{% url 'shop:home' %}">Shop Now</a>
                     </div>
                     `
-            $("#checkoutItemsContainer").html(elem)
             $(".place-order-form-container").addClass("d-none")
         }
+        $("#checkoutItemsContainer").html(elem)
         
         // collect all cart items
         if (cart?.length) {

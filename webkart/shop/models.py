@@ -36,3 +36,12 @@ class Order(models.Model):
 
     def __str__(self):
         return self.email
+    
+class OrderUpdate(models.Model):
+    order_id = models.IntegerField()
+    update_desc = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+            return self.update_desc if len(self.update_desc) < 20 else self.update_desc[:20] + "..."
+    

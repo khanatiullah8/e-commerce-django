@@ -41,7 +41,6 @@
             elem += `<div>
                         <a class="btn btn-primary" href="{% url 'shop:viewcheckout' %}">Checkout</a>
                     </div>`
-            $("#cartItemContainer").html(elem)
         } else {
             elem = `
                     <p class='card-text text-muted fs-2 text-center'>Your Cart is Empty</p>
@@ -49,8 +48,8 @@
                         <a class="btn btn-primary" href="{% url 'shop:home' %}">Shop Now</a>
                     </div>
                     `
-            $("#cartItemContainer").html(elem)
         }
+        $("#cartItemContainer").html(elem)
         
         $(".clear-cart-btn").click(function() {
             localStorage.removeItem('cart')

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %} View Cart {% endblock %}
+
+{% block body %}
+<div class="container">
+    <h3 class='my-3 text-capitalize'>track your order</h3>
+    <form class="row g-3" id="trackerForm" action="{% url 'shop:tracker' %}" method="post">
+        {% csrf_token %}
+        <div class="col-md-6">
+            <label for="orderId" class="form-label">Order Id</label>
+            <input type="text" name="orderId" class="form-control" id="orderId" required>
+        </div>
+        <div class="col-md-6">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" id="email" required>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Track Order</button>
+        </div>
+    </form>
+    <div class="my-4">
+        <div id="orderStatusContainer" class="my-3"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script type="module">
+    import {formatStrToDate} from "{% static 'js/utils_functions.js' %}"
+
+    function showOrderStatus() {
+        let elem = ""
+        
+        $('#trackerForm').submit(function(e) {
+            e.preventDefault()
+
+            let formData = {
+                orderId: this.orderId.value.trim(),
+                email: this.email.value.trim(),
+                csrfmiddlewaretoken: this.csrfmiddlewaretoken.value
+            }
+            
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'shop:tracker' %}",
+                data: formData,
+                encode: true
+            })
+            .done(function(res) {
+                // e.target.reset()
+                $(e.target).trigger('reset')
+                $(e.target).find('*').blur()
+                let data = JSON.parse(res)
+                let elem = ""
+                
+                if (data?.length) {
+                    elem += `<h3 class='mb-3 text-capitalize'>order status</h3>`
+                    data.forEach(item => {
+                        elem += `
+                            <div class="ps-2 mb-3 border-start border-4 border-primary">
+                                <h6 class="text-truncate mb-1">${item.text}</h6>
+                                <p class="text-muted fs12 mb-0">${formatStrToDate(item.date)}</p>
+                            </div>
+                            `
+                        });
+                } else {
+                    elem = `<p>Sorry, we are not able to fetch this order id and email. make sure to type correct order id and email</p>`
+                }
+                $("#orderStatusContainer").html(elem)
+            })
+        })
+    }
+
+    showOrderStatus()
+</script>
+{% endblock %}

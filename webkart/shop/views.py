@@ -1,6 +1,7 @@
+import json
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Order, Product, Contact
+from .models import Order, Product, Contact, OrderUpdate
 
 # home
 def home(request):
@@ -35,8 +36,24 @@ def contact(request):
 
     return render(request, 'shop/contact.html', {'thank':thank})
 
+# tracker
 def tracker(request):
-    return HttpResponse("Tracker Page")
+    if request.method == "POST":
+        orderId = request.POST.get('orderId', '')
+        email = request.POST.get("email", "")
+        try:
+            order = Order.objects.filter(id=orderId, email=email)
+            if len(order) > 0:
+                update = OrderUpdate.objects.filter(order_id=orderId)
+                updates = []
+                for i in update:
+                    updates.append({'text': i.update_desc, 'date': i.timestamp})
+                return HttpResponse(json.dumps(updates, default=str))
+            else:
+                return HttpResponse('[]')
+        except Exception as e:
+            return HttpResponse("error")
+    return render(request, 'shop/tracker.html')
 
 def search(request):
     return HttpResponse("Search Page")
@@ -70,6 +87,8 @@ def view_checkout(request):
 
         order = Order(items_json=items_json, name=name, email=email, address=address, address2=address2, city=city, state=state, zip_code=zip_code, phone=phone)
         order.save()
+        orderUpdate = OrderUpdate(order_id=order.id, update_desc='The order has been placed')
+        orderUpdate.save()
         thank = 'true'
         id = order.id
 
