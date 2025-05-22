@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %} View Cart {% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="col my-4">
+        <div id="checkoutItemsContainer" class="my-3"></div>
+    </div>
+    <div class="col my-4 place-order-form-container">
+        <h3 class='mb-2 text-capitalize'>step 2 - enter address & other details</h3>
+        <form class="row g-3" action="{% url 'shop:viewcheckout' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="itemsJson" id="itemsJson">
+            <div class="col-md-6">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" name="name" class="form-control" id="name" required>
+            </div>
+            <div class="col-md-6">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" name="email" class="form-control" id="email" required>
+            </div>
+            <div class="col-12">
+                <label for="address" class="form-label">Address</label>
+                <input type="text" name="address" class="form-control" id="address" required>
+            </div>
+            <div class="col-12">
+                <label for="address2" class="form-label">Address 2</label>
+                <input type="text" name="address2" class="form-control" id="address2" required>
+            </div>
+            <div class="col-md-6">
+                <label for="phone" class="form-label">phone</label>
+                <input type="tel" name="phone" class="form-control" id="phone" required>
+            </div>
+            <div class="col-md-6">
+                <label for="city" class="form-label">City</label>
+                <input type="text" name="city" class="form-control" id="city" required>
+            </div>
+            <div class="col-md-6">
+                <label for="state" class="form-label">state</label>
+                <input type="text" name="state" class="form-control" id="state" required>
+            </div>
+            <div class="col-md-6">
+                <label for="zip" class="form-label">Zip</label>
+                <input type="text" name="zip" class="form-control" id="zip" required>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Place Order</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    let elem = ""
+    if (cart.length) {
+        elem += `<h3 class='mb-3 text-capitalize'>step 1 - checkout - review your cart items</h3>`
+        cart.forEach(item => {
+            elem += `
+                <div class="card mb-2">
+                    <div class="row g-0">
+                        <div class="p-2 col-3 col-md-2">
+                            <img src="${item.image}" style="width: 100px;" class="img-fluid rounded-start" alt="${item.title}">
+                        </div>
+                        <div class="col-9 col-md-10">
+                            <div class="card-body p-2">
+                                <h6 class="card-title text-truncate">${item.title}</h6>
+                                <p class="card-text text-muted mb-1">₹${item.price}</p>
+                                <p class="card-text text-muted mb-1">Qty: ${item.quantity}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `
+        });
+        $("#checkoutItemsContainer").html(elem)
+        $(".place-order-form-container").removeClass("d-none")
+    } else {
+        elem = `
+                <p class='card-text text-muted fs-2 text-center'>Your Cart is Empty</p>
+                <div class="text-center">
+                    <a class="btn btn-primary" href="{% url 'shop:home' %}">Shop Now</a>
+                </div>
+                `
+        $("#checkoutItemsContainer").html(elem)
+        $(".place-order-form-container").addClass("d-none")
+    }
+
+    // collect all cart items
+    if (cart.length) {
+        $("#itemsJson").val(JSON.stringify(cart))
+        if (JSON.parse('{{thank}}')) {
+            localStorage.setItem('toast', 'Thanks for ordering with us. Your order ID is <stong>{{id}}</strong>. Use it to track your order using our order tracker')
+            localStorage.removeItem("cart")
+            document.location = "{% url 'shop:home' %}"
+        }
+    }
+</script>
+{% endblock %}

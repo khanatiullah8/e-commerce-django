@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Product, Contact
+from .models import Order, Product, Contact
 
 # home
 def home(request):
@@ -22,20 +22,18 @@ def about(request):
 
 # contact us
 def contact(request):
-    is_form_submitted = "no"
+    thank = "false"
     if request.method == "POST":
-        name = request.POST.get("name")
-        email = request.POST.get("email")
-        phone = request.POST.get("phone")
-        desc = request.POST.get("desc")
+        name = request.POST.get("name", "")
+        email = request.POST.get("email", "")
+        phone = request.POST.get("phone", "")
+        desc = request.POST.get("desc", "")
 
         contact = Contact(name=name,email=email,phone=phone,desc=desc)
         contact.save()
-        is_form_submitted = "yes"
-    else:
-        is_form_submitted = "no"
+        thank = "true"
 
-    return render(request, 'shop/contact.html', {'is_form_submitted':is_form_submitted})
+    return render(request, 'shop/contact.html', {'thank':thank})
 
 def tracker(request):
     return HttpResponse("Tracker Page")
@@ -56,5 +54,23 @@ def view_cart(request):
     return render(request, 'shop/view-cart.html')
 
 # checkout
-def checkout(request):
-    return HttpResponse("Checkout Page")
+def view_checkout(request):
+    thank = 'false'
+    id = ''
+    if request.method == "POST":
+        items_json = request.POST.get('itemsJson', '')
+        name = request.POST.get("name", "")
+        email = request.POST.get("email", "")
+        address = request.POST.get("address", "")
+        address2 = request.POST.get("address2", "")
+        city = request.POST.get("city", "")
+        state = request.POST.get("state", "")
+        zip_code = request.POST.get("zip", "")
+        phone = request.POST.get("phone", "")
+
+        order = Order(items_json=items_json, name=name, email=email, address=address, address2=address2, city=city, state=state, zip_code=zip_code, phone=phone)
+        order.save()
+        thank = 'true'
+        id = order.id
+
+    return render(request, 'shop/view-checkout.html', {'thank':thank, 'id':id})

@@ -2,28 +2,9 @@
 
 {% block title %} Contact Us {% endblock %}
 
-{% block style %}
-<style>
-.contact-form-toast {
-    top: 60px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-</style>  
-{% endblock %}
-
 {% block body %}
 <div class="container my-2">
     <h2 class="mb-3">Contact Us</h2>
-   <!-- toast -->
-    <div class="contact-form-toast toast-container position-fixed p-3">
-        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">Thanks for contacting us.</div>
-                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-        </div>
-    </div>
     <form action="{% url 'shop:contact' %}" method="post">
         {% csrf_token %}
         <div class="mb-3">
@@ -49,13 +30,9 @@
 
 {% block script %}
 <script>
-    const toastLiveExample = document.getElementById('liveToast')
-    if (Boolean("{{is_form_submitted}}" == "yes")) {
-        const toast = new bootstrap.Toast(toastLiveExample)
-        toast.show()
-        setTimeout(function(){
-            document.location = "{% url 'shop:contact' %}"
-        }, 1500)
+    if (JSON.parse('{{thank}}')) {
+        localStorage.setItem('toast', 'Thanks for contacting us.')
+        document.location = "{% url 'shop:contact' %}"
     }
 </script>
 {% endblock %}
