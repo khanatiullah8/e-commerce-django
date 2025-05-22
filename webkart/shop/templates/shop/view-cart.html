@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block title %} View Cart {% endblock %}
 
 {% block body %}
@@ -9,10 +11,13 @@
 {% endblock %}
 
 {% block script %}
-<script>
+<script type="module">
+    import {convertToIndianRupees} from "{% static 'js/utils_functions.js' %}"
+
     function showCartItems() {
         let cart = JSON.parse(localStorage.getItem('cart')) || []
         let elem = ""
+        let totalPrice = 0
 
         if (cart?.length) {
             elem += `
@@ -22,6 +27,7 @@
                 </div>
                 `
             cart.forEach(item => {
+                totalPrice += Number(item.price)
                 elem += `
                     <div class="col-md-6 px-2">
                         <div class="row g-0 border rounded">
@@ -30,7 +36,7 @@
                             </div>
                             <div class="col-9 col-md-10 p-2">
                                 <h6 class="text-truncate">${item.title}</h6>
-                                <p class="text-muted mb-1">₹${item.price}</p>
+                                <p class="text-muted mb-1">₹${convertToIndianRupees(item.price)}</p>
                                 <p class="text-muted mb-1">Qty: ${item.quantity}</p>
                                 <button data-id='${item.id}' class='btn btn-sm btn-secondary remove-from-cart'>Remove</button>
                             </div>
@@ -39,6 +45,7 @@
                     `
             });
             elem += `<div>
+                        <p>Total Amount:<span class='fs-5 ms-2'>₹${convertToIndianRupees(totalPrice)}</span></p>
                         <a class="btn btn-primary" href="{% url 'shop:viewcheckout' %}">Checkout</a>
                     </div>`
         } else {
