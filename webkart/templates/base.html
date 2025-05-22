@@ -184,15 +184,19 @@
             updateCartData(cart)
         })
 
-        function updateCartData(cart) {
-            updateCartButton(cart)
-
+        // update cart count
+        function updateCartCount(cart) {
             let count = 0
             for(let i in cart) {
             count += cart[i]['quantity']
             }
 
             $("#cartCount").html(count < 100 ? count : "99<sup>+</sup>")
+        }
+
+        function updateCartData(cart) {
+            updateCartButton(cart)
+            updateCartCount(cart)
             localStorage.setItem('cart', JSON.stringify(cart))
         }
     </script> 

@@ -4,63 +4,69 @@
 
 {% block body %}
 <div class="container my-2">
-    <div id="cartItemContainer" class="my-3"></div>
+    <div id="cartItemContainer" class="row g-3 my-3"></div>
 </div>
 {% endblock %}
 
 {% block script %}
 <script>
-    let elem = ""
-    if (cart.length) {
-        elem += `
-            <div class='mb-4 d-flex align-items-center justify-content-between'>
-                <h3 class='m-0'>Cart Items</h3>
-                <button class='btn btn-danger clear-cart-btn'>Clear Cart</button>
-            </div>
-            `
-        cart.forEach(item => {
+    function showCartItems() {
+        let cart = JSON.parse(localStorage.getItem('cart')) || []
+        let elem = ""
+
+        if (cart?.length) {
             elem += `
-                <div class="card mb-2">
-                    <div class="row g-0">
-                        <div class="p-2 col-3 col-md-2">
-                            <img src="${item.image}" style="width: 100px;" class="img-fluid rounded-start" alt="${item.title}">
-                        </div>
-                        <div class="col-9 col-md-10">
-                            <div class="card-body p-2">
-                                <h6 class="card-title text-truncate">${item.title}</h6>
-                                <p class="card-text text-muted mb-1">₹${item.price}</p>
-                                <p class="card-text text-muted mb-1">Qty: ${item.quantity}</p>
+                <div class='mb-4 d-flex align-items-center justify-content-between'>
+                    <h3 class='m-0'>Cart Items</h3>
+                    <button class='btn btn-danger clear-cart-btn'>Clear Cart</button>
+                </div>
+                `
+            cart.forEach(item => {
+                elem += `
+                    <div class="col-md-6 px-2">
+                        <div class="row g-0 border rounded">
+                            <div class="col-3 col-md-2 p-2">
+                                <img src="${item.image}" style="width: 100px;" class="img-fluid rounded-start" alt="${item.title}">
+                            </div>
+                            <div class="col-9 col-md-10 p-2">
+                                <h6 class="text-truncate">${item.title}</h6>
+                                <p class="text-muted mb-1">₹${item.price}</p>
+                                <p class="text-muted mb-1">Qty: ${item.quantity}</p>
                                 <button data-id='${item.id}' class='btn btn-sm btn-secondary remove-from-cart'>Remove</button>
                             </div>
                         </div>
                     </div>
-                </div>
-                `
-        });
-        elem += `<div class="text-center">
-                    <a class="btn btn-primary" href="{% url 'shop:viewcheckout' %}">Checkout</a>
-                </div>`
-        $("#cartItemContainer").html(elem)
-    } else {
-        elem = `
-                <p class='card-text text-muted fs-2 text-center'>Your Cart is Empty</p>
-                <div class="text-center">
-                    <a class="btn btn-primary" href="{% url 'shop:home' %}">Shop Now</a>
-                </div>
-                `
-        $("#cartItemContainer").html(elem)
+                    `
+            });
+            elem += `<div>
+                        <a class="btn btn-primary" href="{% url 'shop:viewcheckout' %}">Checkout</a>
+                    </div>`
+            $("#cartItemContainer").html(elem)
+        } else {
+            elem = `
+                    <p class='card-text text-muted fs-2 text-center'>Your Cart is Empty</p>
+                    <div class="text-center">
+                        <a class="btn btn-primary" href="{% url 'shop:home' %}">Shop Now</a>
+                    </div>
+                    `
+            $("#cartItemContainer").html(elem)
+        }
+        
+        $(".clear-cart-btn").click(function() {
+            localStorage.removeItem('cart')
+            $("#cartCount").html(0)
+            showCartItems()
+        })
+    
+        $(".remove-from-cart").click(function() {
+            let id = this.dataset.id
+            cart = cart.filter(item => item.id != id)
+            updateCartCount(cart)   // function from "base.html"
+            localStorage.setItem('cart', JSON.stringify(cart))
+            showCartItems()
+        })
     }
 
-    $(".clear-cart-btn").click(function() {
-        localStorage.removeItem('cart')
-        document.location = "/shop/viewcart"
-    })
-
-    $(".remove-from-cart").click(function() {
-        let id = this.dataset.id
-        cart = cart.filter(item => item.id != id)
-        localStorage.setItem('cart', JSON.stringify(cart))
-        document.location = "/shop/viewcart/"
-    })
+    showCartItems()
 </script>
 {% endblock %}
