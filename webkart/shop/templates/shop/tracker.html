@@ -21,8 +21,13 @@
             <button type="submit" class="btn btn-primary">Track Order</button>
         </div>
     </form>
-    <div class="my-4">
-        <div id="orderStatusContainer" class="my-3"></div>
+    <div class="row g-4 my-3" id="orderCheckContainer">
+        <div class="col-md-6">
+            <div id="orderDetailsContainer"></div>
+        </div>
+        <div class="col-md-6">
+            <div id="orderStatusContainer"></div>
+        </div>
     </div>
 </div>
 {% endblock %}
@@ -32,7 +37,7 @@
     import {formatStrToDate} from "{% static 'js/utils_functions.js' %}"
 
     function showOrderStatus() {
-        let elem = ""
+        // let elem = ""
         
         $('#trackerForm').submit(function(e) {
             e.preventDefault()
@@ -50,26 +55,45 @@
                 encode: true
             })
             .done(function(res) {
-                // e.target.reset()
                 $(e.target).trigger('reset')
                 $(e.target).find('*').blur()
+
                 let data = JSON.parse(res)
-                let elem = ""
+                let orderUpdates = data?.updates
+                let orderDetails = JSON.parse(data?.orderDetails)
+                let order_update_elem = ""
+                let order_details_elem = ""
                 
-                if (data?.length) {
-                    elem += `<h3 class='mb-3 text-capitalize'>order status</h3>`
-                    data.forEach(item => {
-                        elem += `
+                if (orderUpdates?.length) {
+                    order_update_elem += `<h3 class='mb-3 text-capitalize'>order status</h3>`
+                    orderUpdates.forEach(item => {
+                        order_update_elem += `
                             <div class="ps-2 mb-3 border-start border-4 border-primary">
                                 <h6 class="text-truncate mb-1">${item.text}</h6>
                                 <p class="text-muted fs12 mb-0">${formatStrToDate(item.date)}</p>
                             </div>
                             `
-                        });
+                    });
+                    
+                    order_details_elem += `<h3 class='mb-3 text-capitalize'>order details</h3>`
+                    orderDetails.forEach(item => {
+                        order_details_elem += `
+                            <div class="d-flex gap-2 border rounded mb-2">
+                                <div class="flex-shrink-0">
+                                    <img src="${item.image}" style='height:60px' class="img-fluid rounded-start" alt="${item.title}">
+                                </div>
+                                <div class="p-2 text-truncate">
+                                    <h6 class="text-truncate">${item.title}</h6>
+                                    <p class="text-muted m-0 fs12">Qty: ${item.quantity}</p>
+                                </div>
+                            </div>
+                            `
+                    });  
                 } else {
-                    elem = `<p>Sorry, we are not able to fetch this order id and email. make sure to type correct order id and email</p>`
+                    order_details_elem = `<p>Sorry, we are not able to fetch this order id and email. make sure to type correct order id and email</p>`
                 }
-                $("#orderStatusContainer").html(elem)
+                $("#orderStatusContainer").html(order_update_elem)
+                $("#orderDetailsContainer").html(order_details_elem)
             })
         })
     }

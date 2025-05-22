@@ -82,7 +82,7 @@
                     </div>
                     `
             });
-            elem += `<p class='m-0 mt-2'>Total Amount:<span class='fs-5 ms-2'>₹${convertToIndianRupees(totalPrice)}</span></p>`
+            elem += `<p class='m-0 mt-3'><span class='bg-light px-2 py-1 d-block'>Your Cart Total is <strong>₹${convertToIndianRupees(totalPrice)}</strong> | Enter your details below & place your order.</span></p>`
             $(".place-order-form-container").removeClass("d-none")
         } else {
             elem = `

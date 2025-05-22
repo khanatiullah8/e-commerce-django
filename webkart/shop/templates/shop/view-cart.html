@@ -45,7 +45,7 @@
                     `
             });
             elem += `<div>
-                        <p>Total Amount:<span class='fs-5 ms-2'>₹${convertToIndianRupees(totalPrice)}</span></p>
+                        <p class='mt-2'><span class='bg-light px-2 py-1'>Your Cart Total is <strong>₹${convertToIndianRupees(totalPrice)}</strong></span></p>
                         <a class="btn btn-primary" href="{% url 'shop:viewcheckout' %}">Checkout</a>
                     </div>`
         } else {
