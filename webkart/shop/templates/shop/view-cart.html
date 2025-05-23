@@ -36,8 +36,7 @@
                             </div>
                             <div class="col-9 col-md-10 p-2">
                                 <h6 class="text-truncate">${item.title}</h6>
-                                <p class="text-muted mb-1">₹${convertToIndianRupees(item.price)}</p>
-                                <p class="text-muted mb-1">Qty: ${item.quantity}</p>
+                                <p class="text-muted mb-2">₹${convertToIndianRupees(item.price)}</p>
                                 <span id="div${item.id}" class="divpr">
                                     <button id='minus${item.id}' data-id='${item.id}' class='btn btn-primary minus'><i class="bi bi-dash pe-none"></i></button>
                                     <span class='mx-1'>${item.quantity}</span>
@@ -50,7 +49,7 @@
                     `
             });
             elem += `<div>
-                        <p class='mt-2'><span class='bg-light px-2 py-1 total-price'>Your Cart Total is <strong>₹${convertToIndianRupees(totalPrice)}</strong></span></p>
+                        <p class='mt-2'><span class='bg-light px-2 py-1'>Your Cart Total is <strong id='totalCartPrice'>₹${convertToIndianRupees(totalPrice)}</strong></span></p>
                         <a class="btn btn-primary" href="{% url 'shop:viewcheckout' %}">Checkout</a>
                     </div>`
         } else {
@@ -72,9 +71,8 @@
         $(".remove-from-cart").click(function() {
             let id = this.dataset.id
             cart = cart.filter(item => item.id != id)
-            updateCartCount(cart)   // function from "base.html"
             localStorage.setItem('cart', JSON.stringify(cart))
-            showCartItems()
+            document.location = "{% url 'shop:viewcart' %}"
         })
     }
 

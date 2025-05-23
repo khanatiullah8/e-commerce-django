@@ -101,7 +101,7 @@
             if (JSON.parse('{{thank}}')) {
                 localStorage.setItem('toast', 'Thanks for ordering with us. Your order ID is <stong>{{id}}</strong>. Use it to track your order using our order tracker')
                 localStorage.removeItem("cart")
-                document.location = "{% url 'shop:home' %}"
+                document.location = "{% url 'shop:tracker' %}"
             }
         }
     }
