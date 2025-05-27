@@ -11,7 +11,7 @@
     </div>
     <div class="my-4 place-order-form-container">
         <h3 class='mb-2 text-capitalize'>step 2 - enter address & other details</h3>
-        <form class="row g-3" action="{% url 'shop:viewcheckout' %}" method="post">
+        <form class="row g-3" id="checkoutForm" action="{% url 'shop:viewcheckout' %}" method="post">
             {% csrf_token %}
             <input type="hidden" name="itemsJson" id="itemsJson">
             <div class="col-md-6">
@@ -47,7 +47,7 @@
                 <input type="text" name="zip" class="form-control" id="zip" required>
             </div>
             <div class="col-12">
-                <button type="submit" class="btn btn-primary">Place Order</button>
+                <button type="button" id="checkoutFormSubmit" class="btn btn-primary">Place Order</button>
             </div>
         </form>
     </div>
@@ -55,13 +55,15 @@
 {% endblock %}
 
 {% block script %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script type="module">
     import {convertToIndianRupees} from "{% static 'js/utils_functions.js' %}"
+
+    let totalPrice = 0
 
     function showCheckoutItems() {
         let cart = JSON.parse(localStorage.getItem('cart')) || []
         let elem = ""
-        let totalPrice = 0
 
         if (cart?.length) {
             elem += `<h3 class='mb-3 text-capitalize'>step 1 - checkout - review your cart items</h3>`
@@ -107,5 +109,62 @@
     }
 
     showCheckoutItems()
+
+    document.getElementById('checkoutFormSubmit').addEventListener('click', async function(e) {
+        const checkoutForm = document.getElementById('checkoutForm')
+        let req_data =  {
+            amount: (totalPrice * 100),
+            currency: "INR"
+        }
+    
+        try {
+            // 1st step : create an order
+            let res = await fetch("{% url 'shop:order' %}", {
+                method: "POST",
+                body: JSON.stringify(req_data),
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": checkoutForm.csrfmiddlewaretoken.value
+                }
+            })
+            let data = await res.json()
+
+            // 2nd step : configure razorpay options
+            let options = {
+                key: data?.razorpay_merchant_key,
+                amount: data?.amount,
+                currency: data?.currency,
+                name: "WebKart",
+                description: `Test Payment for order ${data?.order_id}`,
+                order_id: data?.order_id,
+                handler: async function(response) {
+                    let res = await fetch("{% url 'shop:verify' %}", {
+                        method: "POST",
+                        body: JSON.stringify(response),
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRFToken": checkoutForm.csrfmiddlewaretoken.value
+                        }
+                    })
+                    let data = await res.json()
+                    
+                    if (res.status == 200) {
+                        checkoutForm.submit()
+                    }
+                },
+                prefill: {
+                    name: checkoutForm.name.value,
+                    email: checkoutForm.email.value,
+                    contact: checkoutForm.phone.value
+                }
+            };
+            // 3rd step : open razorpay checkout
+            const rzp = new Razorpay(options)
+            rzp.open()
+        } catch (error) {
+            console.log("error: ", error.message);
+        }
+        
+    })
 </script>
 {% endblock %}

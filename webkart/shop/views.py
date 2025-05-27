@@ -1,7 +1,10 @@
 import json
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+import razorpay.errors
 from .models import Order, Product, Contact, OrderUpdate
+import razorpay
+from django.conf import settings
 
 # home
 def home(request):
@@ -70,7 +73,57 @@ def view_product(request, product_id):
 def view_cart(request):
     return render(request, 'shop/view-cart.html')
 
-# checkout
+
+# ========= Payment Integration - start =============
+
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+# create order
+def create_order(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        amount = data.get("amount")
+        currency = data.get("currency")
+        
+        order_data = {
+            "amount": amount,
+            "currency": currency,
+            "payment_capture": "1",
+        }
+
+        razorpay_order = razorpay_client.order.create(data=order_data)
+
+        params = {
+            "order_id": razorpay_order.get("id"),
+            "amount": amount,
+            "currency": currency,
+            "razorpay_merchant_key": settings.RAZORPAY_KEY_ID
+        }
+        return JsonResponse(params)
+    
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+# verify signature
+def verify_signature(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        payment_id = data.get("razorpay_payment_id")
+        order_id = data.get("razorpay_order_id")
+        signature = data.get("razorpay_signature")
+        
+        try: 
+            razorpay_client.utility.verify_payment_signature({
+                "razorpay_payment_id": payment_id,
+                "razorpay_order_id": order_id,
+                "razorpay_signature": signature
+            })
+            return JsonResponse({"payment_success": "true"})
+        except razorpay.errors.SignatureVerificationError:
+            return JsonResponse({"error": "signature verification failed"}, status=400)
+    
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+# save all checkout products in database
 def view_checkout(request):
     thank = 'false'
     id = ''
@@ -92,4 +145,6 @@ def view_checkout(request):
         thank = 'true'
         id = order.id
 
-    return render(request, 'shop/view-checkout.html', {'thank':thank, 'id':id})
+    return render(request, 'shop/view-checkout.html', {'thank': thank, 'id': id})
+
+# ========= Payment Integration - end =============
