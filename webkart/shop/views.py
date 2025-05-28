@@ -5,6 +5,7 @@ import razorpay.errors
 from .models import Order, Product, Contact, OrderUpdate
 import razorpay
 from django.conf import settings
+from .forms import ContactForm
 
 # home
 def home(request):
@@ -28,16 +29,16 @@ def about(request):
 def contact(request):
     thank = "false"
     if request.method == "POST":
-        name = request.POST.get("name", "")
-        email = request.POST.get("email", "")
-        phone = request.POST.get("phone", "")
-        desc = request.POST.get("desc", "")
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            form.save()
+            form.send_mail()
+            thank = "true"
+    else:
+        form = ContactForm()
 
-        contact = Contact(name=name,email=email,phone=phone,desc=desc)
-        contact.save()
-        thank = "true"
-
-    return render(request, 'shop/contact.html', {'thank':thank})
+    context = {"form": form, "thank": thank}
+    return render(request, "shop/contact.html", context)
 
 # tracker
 def tracker(request):

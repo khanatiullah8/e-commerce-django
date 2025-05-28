@@ -2,27 +2,50 @@
 
 {% block title %} Contact Us {% endblock %}
 
+{% block style %}
+<style>
+    #contactForm :is(input[type=text], input[type=email], textarea) {
+        width: 100%;
+        padding: 8px 12px;
+        margin: 2px 0;
+        border: 2px solid #999;
+        border-radius: 4px;
+        outline: none;
+        transition: 0.3s;
+    }
+    
+    #contactForm :is(input[type=text], input[type=email], textarea):focus {
+        box-shadow: 0 0 8px #999;
+    }
+
+    #contactForm .errorlist {
+        list-style: none;
+        color: #ff0000;
+        padding: 0;
+        margin: 0;
+        font-size: 13px;
+    }
+</style>
+{% endblock %}
+
 {% block body %}
 <div class="container my-2">
     <h2 class="mb-3">Contact Us</h2>
-    <form action="{% url 'shop:contact' %}" method="post">
+    <form method="post" id="contactForm">
         {% csrf_token %}
-        <div class="mb-3">
-            <label for="name" class="form-label">Name</label>
-            <input type="text" class="form-control" name="name" id="name" required>
-        </div>
-        <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" name="email" id="email" required>
-        </div>
-        <div class="mb-3">
-            <label for="phone" class="form-label">Phone</label>
-            <input type="tel" class="form-control" name="phone" id="phone" required>
-        </div>
-        <div class="mb-3">
-            <label for="desc" class="form-label">How May We Help You?</label>
-            <textarea class="form-control" name="desc" id="desc" rows="4" required></textarea>
-        </div>
+        {% for field in form %}
+            <div class="form-group mb-2">
+                <label for="{{field.id_for_label}}">{{field.label}}</label>
+                {{field}}
+                {% if field.errors %}
+                    <ul class="errorlist">
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        {% endfor %}
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 </div>
