@@ -1,0 +1,28 @@
+{% extends 'auth_base.html' %}
+
+{% block title %} User Login {% endblock %}
+
+{% block body %}
+<div class="container d-flex min-vh-100">
+    <div class="shadow m-auto p-3">
+        <h3 class="mb-3 text-center">User Login</h3>
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group mb-2">
+                    <label for="{{field.id_for_label}}">{{field.label}}</label>
+                    {{field}}
+                    {% if field.errors %}
+                        <ul class="errorlist">
+                            {% for error in field.errors %}
+                                <li>{{error}}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

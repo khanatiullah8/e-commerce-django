@@ -70,14 +70,22 @@
                         <a class="nav-link" href="{% url 'shop:tracker' %}">Tracker</a>
                     </li>
                 </ul>
-                <!-- <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form> -->
-                <a class="text-white text-decoration-none ms-3 me-2 position-relative cart" href="{% url 'shop:viewcart' %}">
+                <a class="text-white text-decoration-none me-2 position-relative cart" href="{% url 'shop:viewcart' %}">
                     <span class="bi bi-cart3 cart-icon"></span>
-                    <span class="cart-count position-absolute top-0 start-50 bg-white text-dark rounded-circle border border-3 border-dark d-inline-flex justify-content-center align-items-center" id="cartCount">0</span>
+                    <span class="cart-count position-absolute top-0 end-50 bg-white text-dark rounded-circle border border-3 border-dark d-inline-flex justify-content-center align-items-center" id="cartCount">0</span>
                 </a>
+                <div class="d-flex align-items-center">
+                    {% if request.user.username %}
+                        <span class="text-uppercase fw-bold mx-3 text-white">{{request.user.username}}</span>
+                        <form action="{% url 'users:logout' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary ms-1">Logout</button>
+                        </form>
+                    {% else %}
+                        <a class="btn btn-primary ms-1" href="{% url 'users:register' %}">Register</a>
+                        <a class="btn btn-primary ms-1" href="{% url 'users:login' %}">Login</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </nav>
