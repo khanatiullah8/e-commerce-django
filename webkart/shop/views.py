@@ -32,7 +32,7 @@ def contact(request):
         form = ContactForm(request.POST)
         if form.is_valid():
             form.save()
-            form.send_mail()
+            form.send_email(request)
             thank = "true"
     else:
         form = ContactForm()

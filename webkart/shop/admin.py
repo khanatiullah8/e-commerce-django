@@ -12,7 +12,9 @@ class ProductResource(resources.ModelResource):
     class Meta:
         model = Product
 
-class ProductAdmin(ImportExportModelAdmin):
+class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     resource_classes = [ProductResource]
+    list_display = ("id", "title", "brand", "category", "price", "image")
+    search_fields = ("title", "brand", "category")
 
 admin.site.register(Product, ProductAdmin)
