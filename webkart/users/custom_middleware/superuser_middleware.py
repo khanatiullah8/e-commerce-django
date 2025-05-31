@@ -8,11 +8,12 @@ class SuperuserMiddleware:
 
     def __call__(self, request):
         login_url = reverse('users:login')
+        allowed_paths = [reverse('users:login'), reverse('users:register')]
         
-        if request.path == login_url:
-            return self.get_response(request)
+        if request.user.is_authenticated and request.path in allowed_paths:
+            return redirect("index")
         
-        if not request.user.is_authenticated:
+        if not request.user.is_authenticated and request.path not in allowed_paths:
             return redirect(login_url)
         
         protected_urls = ['/admin/']

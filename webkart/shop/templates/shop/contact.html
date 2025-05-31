@@ -4,20 +4,6 @@
 
 {% block style %}
 <style>
-    #contactForm :is(input[type=text], input[type=email], textarea) {
-        width: 100%;
-        padding: 8px 12px;
-        margin: 2px 0;
-        border: 2px solid #999;
-        border-radius: 4px;
-        outline: none;
-        transition: 0.3s;
-    }
-    
-    #contactForm :is(input[type=text], input[type=email], textarea):focus {
-        box-shadow: 0 0 8px #999;
-    }
-
     #contactForm .errorlist {
         list-style: none;
         color: #ff0000;
@@ -46,7 +32,7 @@
                 {% endif %}
             </div>
         {% endfor %}
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary mt-2">Submit</button>
     </form>
 </div>
 {% endblock %}

@@ -18,7 +18,11 @@ class ContactForm(forms.ModelForm):
             "desc": "How May We Help You?"
         }
         widgets = {
-            'desc': forms.Textarea(attrs={'rows': 5})
+            'name': forms.TextInput(attrs={'class':'form-control mt-1'}),
+            'email': forms.TextInput(attrs={'class':'form-control mt-1'}),
+            'phone': forms.TextInput(attrs={'class':'form-control mt-1'}),
+            'subject': forms.TextInput(attrs={'class':'form-control mt-1'}),
+            'desc': forms.Textarea(attrs={'rows': 5, 'class': 'form-control mt-1'})
         }
 
     def clean_phone(self):
